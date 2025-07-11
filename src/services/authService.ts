@@ -43,7 +43,7 @@ export class AuthService {
 
   private async authenticateWithPassword(credentials: AuthCredentials): Promise<AuthResult> {
     try {
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,25 +51,44 @@ export class AuthService {
         body: JSON.stringify(credentials),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        return {
-          success: true,
-          message: 'ログインに成功しました',
-          token: data.token,
-          user: data.user,
-        };
+        // レスポンスが成功の場合、JSONの解析を試みる
+        try {
+          const data = await response.json();
+          return {
+            success: true,
+            message: 'ログインに成功しました',
+            token: data.token,
+            user: data.user,
+          };
+        } catch {
+          // JSONの解析に失敗した場合でも成功として扱う
+          return {
+            success: true,
+            message: 'ログインに成功しました',
+          };
+        }
       } else {
-        return {
-          success: false,
-          message: data.message || 'ログインに失敗しました',
-        };
+        // エラーレスポンスの場合、JSONの解析を試みる
+        try {
+          const data = await response.json();
+          return {
+            success: false,
+            message: data.message || `ログインに失敗しました (${response.status})`,
+          };
+        } catch {
+          // JSONの解析に失敗した場合、ステータスコードをメッセージに含める
+          return {
+            success: false,
+            message: `ログインに失敗しました (${response.status})`,
+          };
+        }
       }
     } catch (_error) {
+      // ネットワークエラーや接続エラーの場合
       return {
         success: false,
-        message: 'ネットワークエラーが発生しました',
+        message: 'サーバーに接続できませんでした。ローカルサーバーが起動しているか確認してください。',
       };
     }
   }
@@ -99,7 +118,7 @@ export class AuthService {
           message: data.message || 'OAuth認証に失敗しました',
         };
       }
-    } catch (_error) {
+    } catch (e) {
       return {
         success: false,
         message: 'OAuth認証エラーが発生しました',
