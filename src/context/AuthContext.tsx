@@ -100,21 +100,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return authenticate(methods, type, credentials);
   };
 
-  const loginUser = (userData: AuthUser, token?: string) => {
+  const loginUser = useCallback((userData: AuthUser, token?: string) => {
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem('auth_user', JSON.stringify(userData));
     if (token) {
       localStorage.setItem('auth_token', token);
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('auth_user');
     localStorage.removeItem('auth_token');
-  };
+  }, []);
 
   const value: AuthContextType = {
     methods,
