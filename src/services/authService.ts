@@ -17,29 +17,17 @@ export async function authenticateWithPassword(credentials: AuthCredentials): Pr
     });
 
     if (response.ok) {
-      // レスポンスが成功の場合、JSONの解析を試みる
-      try {
-        const data = await response.json();
-        return {
-          success: true,
-          message: 'ログインに成功しました',
-          token: data.token,
-          user: data.user,
-        };
-      } catch {
-        // JSONの解析に失敗した場合でも成功として扱う
-        // 外部サーバーが応答していない場合のフォールバック
-        return {
-          success: true,
-          message: 'ログインに成功しました',
-          user: {
-            id: 'demo-user',
-            username: credentials.username,
-            email: `${credentials.username}@example.com`,
-          },
-          token: 'demo-token-' + Date.now(),
-        };
-      }
+      // レスポンスが成功の場合、関数呼び出し時の情報を使用してユーザー情報を作成
+      return {
+        success: true,
+        message: 'ログインに成功しました',
+        user: {
+          id: 'user-' + Date.now(),
+          username: credentials.username,
+          email: `${credentials.username}@example.com`,
+        },
+        token: 'token-' + Date.now(),
+      };
     } else {
       // エラーレスポンスの場合、JSONの解析を試みる
       try {
@@ -58,17 +46,24 @@ export async function authenticateWithPassword(credentials: AuthCredentials): Pr
     }
   } catch (_error) {
     // ネットワークエラーや接続エラーの場合
-    // デモ用のフォールバック認証
-    console.log('外部サーバーに接続できませんでした。デモ認証を使用します。');
+    // 開発環境では、外部サーバーが起動していない場合のテスト用フォールバック
+    if (process.env.NODE_ENV === 'development') {
+      console.log('外部サーバーに接続できませんでした。開発用のテスト認証を使用します。');
+      return {
+        success: true,
+        message: 'テスト認証でログインしました',
+        user: {
+          id: 'test-user-' + Date.now(),
+          username: credentials.username,
+          email: `${credentials.username}@test.com`,
+        },
+        token: 'test-token-' + Date.now(),
+      };
+    }
+    
     return {
-      success: true,
-      message: 'デモ認証でログインしました',
-      user: {
-        id: 'demo-user',
-        username: credentials.username,
-        email: `${credentials.username}@demo.com`,
-      },
-      token: 'demo-token-' + Date.now(),
+      success: false,
+      message: 'サーバーに接続できませんでした。ローカルサーバーが起動しているか確認してください。',
     };
   }
 }

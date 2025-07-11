@@ -18,15 +18,12 @@ function HomeContent() {
     const token = searchParams.get('token');
     const userParam = searchParams.get('user');
 
-    console.log('Auth params:', { authSuccess, message, token, userParam });
-
     if (authSuccess === 'true' && message) {
       setSuccessMessage(message);
       
       if (userParam) {
         try {
           const userData = JSON.parse(userParam);
-          console.log('Parsed user data:', userData);
           loginUser(userData, token || undefined);
         } catch (error) {
           console.error('Failed to parse user data:', error);
@@ -41,10 +38,6 @@ function HomeContent() {
       return () => clearTimeout(timer);
     }
   }, [searchParams, loginUser]);
-
-  useEffect(() => {
-    console.log('Auth state:', { isAuthenticated, user });
-  }, [isAuthenticated, user]);
 
   const handleLogout = () => {
     logout();
