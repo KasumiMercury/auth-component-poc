@@ -35,7 +35,7 @@ export class AuthService {
       type: 'oauth',
       name: 'OAuth認証',
       description: 'Google、GitHub等のOAuthプロバイダーでログイン',
-      enabled: false,
+      enabled: true,
       authenticate: (credentials: unknown) =>
         this.authenticateWithOAuth(credentials as OAuthCredentials),
     });
