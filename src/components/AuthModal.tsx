@@ -21,7 +21,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       setTimeout(() => {
         onClose();
         setAuthResult(null);
-      }, 2000);
+      }, 1000);
     }
   };
 

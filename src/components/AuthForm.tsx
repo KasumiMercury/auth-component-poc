@@ -1,6 +1,7 @@
 'use client';
 
 import { type FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import type { AuthResult } from '@/types/auth';
 
@@ -11,7 +12,8 @@ interface AuthFormProps {
 export const AuthForm: React.FC<AuthFormProps> = ({ onAuthResult }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { authenticate, loading } = useAuth();
+  const { authenticate, loading, loginUser } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -25,7 +27,34 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthResult }) => {
     }
 
     const result = await authenticate('password', { username, password });
+    console.log('Password auth result:', result);
     onAuthResult(result);
+    
+    if (result.success) {
+      if (result.user) {
+        console.log('Setting user in context:', result.user);
+        loginUser(result.user, result.token);
+      }
+      
+      setTimeout(() => {
+        const params = new URLSearchParams({
+          auth_success: 'true',
+          message: result.message,
+        });
+        
+        if (result.user) {
+          params.set('user', JSON.stringify(result.user));
+          console.log('Setting user in URL params:', result.user);
+        }
+        
+        if (result.token) {
+          params.set('token', result.token);
+        }
+        
+        console.log('Redirecting to:', '/?' + params.toString());
+        router.push('/?' + params.toString());
+      }, 1000);
+    }
   };
 
   return (
