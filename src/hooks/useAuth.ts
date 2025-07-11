@@ -1,31 +1,26 @@
-import { useEffect, useState } from 'react';
-import { AuthService } from '@/services/authService';
-import type { AuthMethod, AuthMethodType, AuthResult } from '@/types/auth';
+import { useAuthContext } from '@/context/AuthContext';
+import type { AuthMethodType, AuthResult } from '@/types/auth';
 
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false);
-  const [enabledMethods, setEnabledMethods] = useState<AuthMethod[]>([]);
-  const authService = AuthService.getInstance();
-
-  useEffect(() => {
-    const methods = authService.getEnabledMethods();
-    setEnabledMethods(methods);
-  }, [authService]);
+  const {
+    enabledMethods,
+    loading,
+    getMethod,
+    getEnabledMethods,
+    authenticate: contextAuthenticate,
+    setLoading,
+  } = useAuthContext();
 
   const authenticate = async (type: AuthMethodType, credentials: unknown): Promise<AuthResult> => {
     setLoading(true);
 
     try {
-      const result = await authService.authenticate(type, credentials);
+      const result = await contextAuthenticate(type, credentials);
       return result;
     } finally {
       setLoading(false);
     }
   };
-
-  const getEnabledMethods = () => enabledMethods;
-
-  const getMethod = (type: AuthMethodType) => authService.getMethod(type);
 
   return {
     authenticate,
