@@ -28,8 +28,8 @@ export async function GET(
         const result = await authenticateWithGoogle(code);
 
         if (result.success) {
-          const redirectUrl = new URL('/auth', request.url);
-          redirectUrl.searchParams.set('success', 'true');
+          const redirectUrl = new URL('/', request.url);
+          redirectUrl.searchParams.set('auth_success', 'true');
           redirectUrl.searchParams.set('message', result.message);
           if (result.token) {
             redirectUrl.searchParams.set('token', result.token);

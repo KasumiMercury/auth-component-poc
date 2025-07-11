@@ -5,10 +5,14 @@ export const useAuth = () => {
   const {
     enabledMethods,
     loading,
+    isAuthenticated,
+    user,
     getMethod,
     getEnabledMethods,
     authenticate: contextAuthenticate,
     setLoading,
+    loginUser,
+    logout,
   } = useAuthContext();
 
   const authenticate = async (type: AuthMethodType, credentials: unknown): Promise<AuthResult> => {
@@ -28,5 +32,9 @@ export const useAuth = () => {
     enabledMethods,
     getEnabledMethods,
     getMethod,
+    isAuthenticated,
+    user,
+    loginUser,
+    logout,
   };
 };
