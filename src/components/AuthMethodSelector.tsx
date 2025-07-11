@@ -29,7 +29,7 @@ export const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
         id="auth-method"
         value={selectedMethod}
         onChange={(e) => onMethodChange(e.target.value as AuthMethodType)}
-        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"
         disabled={disabled}
       >
         {enabledMethods.map((method) => (

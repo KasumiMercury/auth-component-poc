@@ -118,7 +118,7 @@ export class AuthService {
           message: data.message || 'OAuth認証に失敗しました',
         };
       }
-    } catch (e) {
+    } catch (_e) {
       return {
         success: false,
         message: 'OAuth認証エラーが発生しました',
