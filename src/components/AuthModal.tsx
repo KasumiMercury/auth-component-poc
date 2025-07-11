@@ -44,11 +44,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center"
+      onClick={handleClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+          handleClose();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="背景をクリックしてモーダルを閉じる"
+    >
+      <div 
+        className="relative p-5 border w-96 shadow-lg rounded-md bg-white"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+          if (e.key === 'Escape') {
+            handleClose();
+          }
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        tabIndex={-1}
+      >
         <div className="mt-3">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-gray-900">ログイン</h3>
+            <h3 id="modal-title" className="text-lg font-medium text-gray-900">ログイン</h3>
             <button
               type="button"
               onClick={handleClose}
